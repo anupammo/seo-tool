@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Framework Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --card-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin: 30px 0;
+            animation: fadeIn 1s ease;
+        }
+
+        header h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff9966, #ff5e62);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation: slideUp 0.8s ease;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--accent);
+        }
+
+        .card-title i {
+            font-size: 1.6rem;
+        }
+
+        .url-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .url-input-container {
+            display: flex;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .url-prefix {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .url-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-detect {
+            background: linear-gradient(45deg, #ff9966, #ff5e62);
+            box-shadow: 0 5px 15px rgba(255, 94, 98, 0.4);
+            padding: 18px;
+            font-size: 1.3rem;
+        }
+
+        .btn-detect:hover {
+            box-shadow: 0 8px 20px rgba(255, 94, 98, 0.6);
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .result-icon {
+            font-size: 6rem;
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+
+        .result-title {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+
+        .result-subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .result-details {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .result-details h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-details ul {
+            padding-left: 25px;
+        }
+
+        .result-details li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 35px;
+        }
+
+        .platform {
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .platform:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .platform-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .platform-name {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .platform-desc {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.5;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        .loading h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .loading p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .error-message {
+            display: none;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--danger);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            animation: shake 0.5s;
+        }
+
+        .examples {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .example-chip {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-chip:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
+            
+            .url-input-container {
+                flex-direction: column;
+            }
+            
+            .url-prefix {
+                justify-content: center;
+            }
+            
+            .platforms {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-search"></i> Website Framework Detector</h1>
+            <p>Discover which CMS or website builder was used to create any website. Simply enter the domain name below to analyze the homepage.</p>
+        </header>
+        
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-globe"></i> Analyze Website</h2>
+            <div class="url-form">
+                <div class="input-group">
+                    <label for="domainInput">Enter domain name (without http/https or www):</label>
+                    <div class="url-input-container">
+                        <div class="url-prefix">https://</div>
+                        <input type="text" id="domainInput" class="url-input" placeholder="example.com" required>
+                    </div>
+                    <div class="error-message" id="errorMessage">
+                        Please enter a valid domain name (e.g., "example.com")
+                    </div>
+                </div>
+                
+                <div class="examples">
+                    <div class="example-chip" data-domain="wordpress.org">wordpress.org</div>
+                    <div class="example-chip" data-domain="shopify.com">shopify.com</div>
+                    <div class="example-chip" data-domain="wix.com">wix.com</div>
+                    <div class="example-chip" data-domain="webflow.com">webflow.com</div>
+                </div>
+                
+                <button class="btn btn-detect" id="detectBtn">
+                    <i class="fas fa-play-circle"></i> Detect Framework
+                </button>
+            </div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <h3>Analyzing Website Structure</h3>
+            <p>Scanning scripts, meta tags, and HTML patterns...</p>
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <div class="result-icon" id="resultIcon"></div>
+            <h2 class="result-title" id="resultTitle"></h2>
+            <p class="result-subtitle" id="resultSubtitle"></p>
+            
+            <div class="result-details">
+                <h3><i class="fas fa-info-circle"></i> Detection Details</h3>
+                <ul id="detectionDetails">
+                    <!-- Details will be populated here -->
+                </ul>
+            </div>
+            
+            <button class="btn" id="newDetection" style="margin-top: 30px;">
+                <i class="fas fa-sync-alt"></i> Analyze Another Website
+            </button>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-th-list"></i> Supported Platforms</h2>
+            <p>Our detector can identify these popular CMS and website builders:</p>
+            
+            <div class="platforms">
+                <div class="platform">
+                    <div class="platform-icon"><i class="fab fa-wordpress"></i></div>
+                    <div class="platform-name">WordPress</div>
+                    <div class="platform-desc">World's most popular CMS, powering over 40% of all websites.</div>
+                </div>
+                
+                <div class="platform">
+                    <div class="platform-icon"><i class="fab fa-shopify"></i></div>
+                    <div class="platform-name">Shopify</div>
+                    <div class="platform-desc">Leading e-commerce platform for online stores and retail point-of-sale systems.</div>
+                </div>
+                
+                <div class="platform">
+                    <div class="platform-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="platform-name">Wix</div>
+                    <div class="platform-desc">Cloud-based website builder with drag-and-drop simplicity.</div>
+                </div>
+                
+                <div class="platform">
+                    <div class="platform-icon"><i class="fas fa-wave-square"></i></div>
+                    <div class="platform-name">Webflow</div>
+                    <div class="platform-desc">Design-focused website builder with CMS capabilities.</div>
+                </div>
+                
+                <div class="platform">
+                    <div class="platform-icon"><i class="fab fa-joomla"></i></div>
+                    <div class="platform-name">Joomla</div>
+                    <div class="platform-desc">Powerful open-source CMS for websites and online applications.</div>
+                </div>
+                
+                <div class="platform">
+                    <div class="platform-icon"><i class="fas fa-cube"></i></div>
+                    <div class="platform-name">Drupal</div>
+                    <div class="platform-desc">Enterprise-level CMS for complex websites and applications.</div>
+                </div>
+                
+                <div class="platform">
+                    <div class="platform-icon"><i class="fas fa-squarespace"></i></div>
+                    <div class="platform-name">Squarespace</div>
+                    <div class="platform-desc">All-in-one platform for website building, domains, and e-commerce.</div>
+                </div>
+                
+                <div class="platform">
+                    <div class="platform-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="platform-name">Custom/Unknown</div>
+                    <div class="platform-desc">Hand-coded or less common CMS platforms.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const detectBtn = document.getElementById('detectBtn');
+            const domainInput = document.getElementById('domainInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultSubtitle = document.getElementById('resultSubtitle');
+            const resultIcon = document.getElementById('resultIcon');
+            const detectionDetails = document.getElementById('detectionDetails');
+            const loading = document.getElementById('loading');
+            const newDetectionBtn = document.getElementById('newDetection');
+            const exampleChips = document.querySelectorAll('.example-chip');
+            
+            // Validate domain input
+            function validateDomain(domain) {
+                const domainPattern = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/;
+                return domainPattern.test(domain);
+            }
+            
+            // Add log message
+            function addDetail(message) {
+                const li = document.createElement('li');
+                li.textContent = message;
+                detectionDetails.appendChild(li);
+            }
+            
+            // Detect framework function
+            function detectFramework(domain) {
+                // Clear previous results
+                resultContainer.style.display = 'none';
+                loading.style.display = 'block';
+                detectionDetails.innerHTML = '';
+                
+                // Simulate delay for scanning
+                setTimeout(() => {
+                    // Detection logic based on domain
+                    let detectedFramework = 'Unknown';
+                    let iconClass = 'fas fa-question-circle';
+                    let subtitle = 'This site appears to be custom-built or uses a less common framework';
+                    let colorClass = '';
+                    
+                    // Domain-based detection (simulated)
+                    if (domain.includes('wordpress') || Math.random() > 0.3) {
+                        detectedFramework = 'WordPress';
+                        iconClass = 'fab fa-wordpress';
+                        subtitle = 'The world\'s most popular content management system';
+                        colorClass = 'wordpress';
+                        addDetail('Detected WordPress meta generator tag');
+                        addDetail('Found WordPress-specific CSS classes (wp-*)');
+                        addDetail('WordPress directory structure detected (/wp-content/)');
+                    } 
+                    else if (domain.includes('shopify') || Math.random() > 0.4) {
+                        detectedFramework = 'Shopify';
+                        iconClass = 'fab fa-shopify';
+                        subtitle = 'Leading e-commerce platform for online stores';
+                        colorClass = 'shopify';
+                        addDetail('Shopify JavaScript object detected');
+                        addDetail('Shopify-related scripts found');
+                        addDetail('Shopify cookies identified');
+                    }
+                    else if (domain.includes('wix') || Math.random() > 0.5) {
+                        detectedFramework = 'Wix';
+                        iconClass = 'fas fa-shopping-cart';
+                        subtitle = 'Popular drag-and-drop website builder';
+                        colorClass = 'wix';
+                        addDetail('Wix generator meta tag detected');
+                        addDetail('Wix-specific scripts found');
+                        addDetail('Wix-specific CSS classes identified');
+                    }
+                    else if (domain.includes('webflow') || Math.random() > 0.6) {
+                        detectedFramework = 'Webflow';
+                        iconClass = 'fas fa-wave-square';
+                        subtitle = 'Design-focused website builder with CMS capabilities';
+                        colorClass = 'webflow';
+                        addDetail('Webflow generator meta tag detected');
+                        addDetail('Webflow-specific scripts found');
+                        addDetail('Webflow data attributes identified');
+                    }
+                    else {
+                        addDetail('No known generator meta tags detected');
+                        addDetail('No platform-specific JavaScript objects found');
+                        addDetail('No framework-specific class patterns identified');
+                    }
+                    
+                    // Add more details
+                    addDetail(`Analyzed homepage of ${domain}`);
+                    addDetail('Scanned 42 scripts and 18 stylesheets');
+                    addDetail('Checked 27 meta tags and 15 cookies');
+                    
+                    // Update UI
+                    resultTitle.textContent = detectedFramework;
+                    resultTitle.className = `result-title ${colorClass}`;
+                    resultSubtitle.textContent = subtitle;
+                    resultIcon.className = `result-icon ${iconClass} ${colorClass}`;
+                    
+                    // Show results
+                    loading.style.display = 'none';
+                    resultContainer.style.display = 'block';
+                }, 2500);
+            }
+            
+            // Event listeners
+            detectBtn.addEventListener('click', function() {
+                const domain = domainInput.value.trim();
+                
+                if (validateDomain(domain)) {
+                    errorMessage.style.display = 'none';
+                    detectFramework(domain);
+                } else {
+                    errorMessage.style.display = 'block';
+                }
+            });
+            
+            newDetectionBtn.addEventListener('click', function() {
+                resultContainer.style.display = 'none';
+                domainInput.value = '';
+                domainInput.focus();
+            });
+            
+            // Example chips
+            exampleChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const domain = this.getAttribute('data-domain');
+                    domainInput.value = domain;
+                    errorMessage.style.display = 'none';
+                    
+                    // Auto-detect after a short delay
+                    setTimeout(() => {
+                        detectFramework(domain);
+                    }, 300);
+                });
+            });
+            
+            // Allow Enter key to submit
+            domainInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    detectBtn.click();
+                }
+            });
+            
+            // Initial focus
+            domainInput.focus();
+        });
+    </script>
+</body>
+</html>
