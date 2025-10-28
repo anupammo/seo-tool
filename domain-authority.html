@@ -2,59 +2,422 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Domain Authority Checker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuthorityTemple | Domain Authority Analysis</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #ff6f00;
+      --primary-dark: #e65c00;
+      --secondary: #7B1FA2;
+      --accent: #FFAB40;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --gray: #64748b;
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
-      background-color: #f0f4f8;
-    }
-    form {
-      background: #fff;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: relative;
+      overflow-x: hidden;
     }
-    input[type="text"] {
+    
+    .background-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
     }
-    button {
-      padding: 10px 20px;
-      background-color: #ff6f00;
+    
+    .temple-pillar {
+      position: absolute;
+      bottom: 0;
+      width: 80px;
+      height: 300px;
+      background: linear-gradient(to top, rgba(255, 111, 0, 0.1) 0%, rgba(255, 111, 0, 0.05) 100%);
+      border-left: 2px solid rgba(255, 111, 0, 0.3);
+      border-right: 2px solid rgba(255, 111, 0, 0.3);
+    }
+    
+    .pillar-left {
+      left: 15%;
+    }
+    
+    .pillar-right {
+      right: 15%;
+    }
+    
+    .temple-roof {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 150px;
+      background: linear-gradient(to bottom, rgba(255, 111, 0, 0.15) 0%, transparent 100%);
+      clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%);
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      z-index: 1;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo-icon {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-right: 10px;
+    }
+    
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      background: linear-gradient(to right, var(--accent), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .tagline {
+      font-size: 1rem;
+      color: var(--gray);
+      margin-bottom: 40px;
+    }
+    
+    .card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: var(--transition);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+    
+    .card-header {
+      margin-bottom: 30px;
+    }
+    
+    .card-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--light);
+    }
+    
+    .card-subtitle {
+      font-size: 1rem;
+      color: var(--gray);
+    }
+    
+    .input-group {
+      position: relative;
+      margin-bottom: 25px;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: var(--light);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.2);
+    }
+    
+    .input-label {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      color: var(--gray);
+      pointer-events: none;
+      transition: var(--transition);
+    }
+    
+    .input-field:focus + .input-label,
+    .input-field:not(:placeholder-shown) + .input-label {
+      top: -10px;
+      left: 15px;
+      font-size: 0.8rem;
+      background: var(--dark);
+      padding: 0 8px;
+      color: var(--primary);
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(to right, var(--primary), var(--primary-dark));
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
     }
-    button:hover {
-      background-color: #e65c00;
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 111, 0, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn-icon {
+      margin-right: 8px;
+      font-size: 1.1rem;
+    }
+    
+    .btn-loading {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .features {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    .feature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
+      border-radius: 10px;
+      transition: var(--transition);
+    }
+    
+    .feature:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .feature-icon {
+      font-size: 1.5rem;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    
+    .feature-text {
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+    
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+    
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    .floating-element {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 111, 0, 0.2) 0%, transparent 70%);
+      z-index: -1;
+    }
+    
+    .floating-1 {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 5%;
+      animation: float 15s infinite ease-in-out;
+    }
+    
+    .floating-2 {
+      width: 150px;
+      height: 150px;
+      bottom: 15%;
+      right: 8%;
+      animation: float 12s infinite ease-in-out reverse;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .pillar-left, .pillar-right {
+        display: none;
+      }
+      
+      .card {
+        padding: 30px 20px;
+      }
+      
+      .features {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .feature {
+        flex-direction: row;
+        justify-content: flex-start;
+      }
+      
+      .feature-icon {
+        margin-right: 10px;
+        margin-bottom: 0;
+      }
     }
   </style>
 </head>
 <body>
-
-  <form id="mozDAForm">
-    <h2>Check Domain Authority</h2>
-    <input type="text" id="urlInput" placeholder="Enter domain (e.g. example.com)" required />
-    <button type="submit">Check DA</button>
-  </form>
+  <div class="background-elements">
+    <div class="temple-roof"></div>
+    <div class="temple-pillar pillar-left"></div>
+    <div class="temple-pillar pillar-right"></div>
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+  </div>
+  
+  <div class="container">
+    <div class="logo">
+      <i class="fas fa-crown logo-icon"></i>
+      <h1 class="logo-text">AuthorityTemple</h1>
+    </div>
+    
+    <p class="tagline">Enter the sacred grounds of domain authority analysis</p>
+    
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Check Domain Authority</h2>
+        <p class="card-subtitle">Analyze your domain's SEO strength and ranking potential</p>
+      </div>
+      
+      <form id="mozDAForm">
+        <div class="input-group">
+          <input type="text" id="urlInput" class="input-field" placeholder=" " required>
+          <label for="urlInput" class="input-label">Domain (e.g. example.com)</label>
+        </div>
+        
+        <button type="submit" class="btn" id="analyzeBtn">
+          <span class="btn-loading" id="btnLoading"></span>
+          <i class="fas fa-chart-line btn-icon"></i>
+          <span id="btnText">Check DA</span>
+        </button>
+      </form>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <i class="fas fa-trophy feature-icon"></i>
+        <span class="feature-text">Authority Score</span>
+      </div>
+      <div class="feature">
+        <i class="fas fa-link feature-icon"></i>
+        <span class="feature-text">Backlink Profile</span>
+      </div>
+      <div class="feature">
+        <i class="fas fa-search feature-icon"></i>
+        <span class="feature-text">Ranking Factors</span>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>Powered by Moz Domain Analysis • <a href="https://moz.com/learn/seo/domain-authority" target="_blank">Learn More</a></p>
+    </div>
+  </div>
 
   <script>
     document.getElementById('mozDAForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      
       const domain = document.getElementById('urlInput').value.trim();
-      if (domain) {
+      if (!domain) return;
+      
+      const btn = document.getElementById('analyzeBtn');
+      const btnText = document.getElementById('btnText');
+      const btnLoading = document.getElementById('btnLoading');
+      
+      // Show loading state
+      btnText.textContent = 'Checking...';
+      btnLoading.style.display = 'block';
+      btn.disabled = true;
+      
+      // Simulate a brief loading period for better UX
+      setTimeout(() => {
         const encodedDomain = encodeURIComponent(domain);
         window.location.href = `https://moz.com/domain-analysis?site=${encodedDomain}`;
+      }, 1500);
+    });
+    
+    // Add input validation
+    document.getElementById('urlInput').addEventListener('input', function() {
+      const domain = this.value.trim();
+      const btn = document.getElementById('analyzeBtn');
+      
+      if (domain) {
+        btn.disabled = false;
+      } else {
+        btn.disabled = true;
       }
     });
   </script>
-
 </body>
 </html>
