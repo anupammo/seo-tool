@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PageSpeed Insights Redirect</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f4f4f4;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4285F4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #357ae8;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="redirectForm">
+    <h2>Check PageSpeed</h2>
+    <input type="text" id="urlInput" placeholder="Enter website URL" required />
+    <button type="submit">Analyze</button>
+  </form>
+
+  <script>
+    document.getElementById('redirectForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const url = document.getElementById('urlInput').value.trim();
+      if (url) {
+        const encodedUrl = encodeURIComponent(url);
+        window.location.href = `https://pagespeed.web.dev/report?url=${encodedUrl}`;
+      }
+    });
+  </script>
+
+</body>
+</html>
